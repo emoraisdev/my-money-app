@@ -2,8 +2,11 @@ import mongoose from 'mongoose'
 
 const mongoUrl = 'mongodb://localhost:27017/mymoney'
 
-export async function connectDB() {
+export default async function connectDB() {
   try {
+
+    mongoose.Error.messages.general.required = "O atributo '{PATH}' é obrigatório"
+
     await mongoose.connect(mongoUrl)
     console.log('MongoDB conectado com sucesso!')
   } catch (err) {
