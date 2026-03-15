@@ -1,12 +1,16 @@
-import { faBank } from "@fortawesome/free-solid-svg-icons";
+import { faBank, faCreditCard, faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import Content from "../common/template/content";
 import ContentHeader from "../common/template/contentHeader";
 import ValueBox from "../common/widget/valueBox";
 import Row from "../common/template/row";
+import { useGetSummaryQuery } from "../billingCycle/billingCycleApi";
 
 export default () => {
 
+    const { data: summary, isLoading, error } = useGetSummaryQuery()
 
+    if (isLoading) return <div>Carregando...</div>;
+    if (error) return <div>Erro ao carregar summary</div>;
 
     return (
         <div>
@@ -17,19 +21,19 @@ export default () => {
                         cols='12 4'
                         color='success'
                         icon={faBank}
-                        value='10'
+                        value={summary.credit}
                         text='Total de Créditos' />
                     <ValueBox
                         cols='12 4'
                         color='danger'
-                        icon={faBank}
-                        value='10'
-                        text='Total de Créditos' />
+                        icon={faCreditCard}
+                        value={summary.debt}
+                        text='Total de Débitos' />
                     <ValueBox
                         cols='12 4'
                         color='primary'
-                        icon={faBank}
-                        value='0'
+                        icon={faMoneyBill}
+                        value={summary.credit - summary.debt}
                         text='Valor Consolidado' />
                 </Row>
             </Content>
