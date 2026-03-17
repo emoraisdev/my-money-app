@@ -29,6 +29,15 @@ export const billingCycleApi = createApi({
                 body: data
             }),
             invalidatesTags: ["BillingCycle", "Summary"]
+        }),
+
+        updateBillingCycle: builder.mutation({
+            query: ({ id, ...data }) => ({
+                url: `/${id}`,
+                method: "PUT",
+                body: data
+            }),
+            invalidatesTags: ["BillingCycle", "Summary"]
         })
     })
 })
@@ -36,5 +45,6 @@ export const billingCycleApi = createApi({
 export const {
     useGetSummaryQuery,
     useGetBillingCyclesQuery,
-    useCreateBillingCycleMutation
+    useCreateBillingCycleMutation,
+    useUpdateBillingCycleMutation
 } = billingCycleApi;

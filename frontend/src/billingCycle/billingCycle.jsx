@@ -7,11 +7,15 @@ import ContentHeader from "../common/template/contentHeader";
 import Row from "../common/template/row";
 import { useState } from "react";
 import TabContent from "../common/tab/tabContent";
+import BillingCycleList from "./billingCycleList";
+import BillingCycleForm from "./billingCycleForm";
+import { useCreateBillingCycleMutation, useUpdateBillingCycleMutation } from "./billingCycleApi";
 
 export default () => {
 
     const [activeTab, setActiveTab] = useState('tabList')
     const [visibleTabs, setVisibleTabs] = useState(["tabList", "tabCreate"])
+    const [successMessage, setSuccessMessage] = useState(null);
 
     const isActive = (tab) => activeTab === tab
 
@@ -62,21 +66,36 @@ export default () => {
                             id="tabList"
                             active={isActive("tabList")}
                             visibleTabs={visibleTabs} >
-                            Lista de registros aqui...
+
+                            {successMessage && (
+                                <div className="alert alert-success mt-3">
+                                    {successMessage}
+                                </div>
+                            )}
+                            <BillingCycleList />
+                            
                         </TabContent>
 
                         <TabContent
                             id="tabCreate"
                             active={isActive("tabCreate")}
-                            visibleTabs={visibleTabs} >
-                            Formulário para incluir...
+                            visibleTabs={visibleTabs}>
+
+                            <BillingCycleForm
+                                useMutationHook={useCreateBillingCycleMutation}
+                                onSuccess={() => {
+                                    setSuccessMessage("Ciclo de pagamento salvo com sucesso!");
+                                    setActiveTab("tabList");
+                                    setTimeout(() => setSuccessMessage(null), 3000);
+                                }} />
+
                         </TabContent>
 
                         <TabContent
                             id="tabUpdate"
                             active={isActive("tabUpdate")}
                             visibleTabs={visibleTabs} >
-                            Formulário para alterar...
+                            <BillingCycleForm useMutationHook={useUpdateBillingCycleMutation} />
                         </TabContent>
 
                         <TabContent
