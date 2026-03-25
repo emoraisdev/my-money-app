@@ -16,8 +16,27 @@ export default () => {
     const [activeTab, setActiveTab] = useState('tabList')
     const [visibleTabs, setVisibleTabs] = useState(["tabList", "tabCreate"])
     const [successMessage, setSuccessMessage] = useState(null);
+    const [activeItem, setActiveItem] = useState(null);
 
     const isActive = (tab) => activeTab === tab
+
+    function edit(item) {
+
+        setActiveItem(item)
+        setActiveTab("tabUpdate")
+        setVisibleTabs(["tabUpdate"])
+    }
+
+    function setAfterOperation(message) {
+        setSuccessMessage(message);
+        setDefaultLayout()
+        setTimeout(() => setSuccessMessage(null), 3000);
+    }
+
+    function setDefaultLayout() {
+        setActiveTab("tabList")
+        setVisibleTabs(["tabList", "tabCreate"])
+    }
 
     return (
         <div>
@@ -72,8 +91,9 @@ export default () => {
                                     {successMessage}
                                 </div>
                             )}
-                            <BillingCycleList />
-                            
+
+                            <BillingCycleList edit={edit} />
+
                         </TabContent>
 
                         <TabContent
@@ -84,10 +104,9 @@ export default () => {
                             <BillingCycleForm
                                 useMutationHook={useCreateBillingCycleMutation}
                                 onSuccess={() => {
-                                    setSuccessMessage("Ciclo de pagamento salvo com sucesso!");
-                                    setActiveTab("tabList");
-                                    setTimeout(() => setSuccessMessage(null), 3000);
-                                }} />
+                                    setAfterOperation("Ciclo de pagamento salvo com sucesso!")
+                                }}
+                                onCancel={() => setDefaultLayout()} />
 
                         </TabContent>
 
@@ -95,7 +114,15 @@ export default () => {
                             id="tabUpdate"
                             active={isActive("tabUpdate")}
                             visibleTabs={visibleTabs} >
-                            <BillingCycleForm useMutationHook={useUpdateBillingCycleMutation} />
+
+                            <BillingCycleForm
+                                useMutationHook={useUpdateBillingCycleMutation}
+                                item={activeItem}
+                                onSuccess={() => {
+                                    setAfterOperation("Ciclo de pagamento alterado com sucesso!")
+                                }}
+                                onCancel={() => setDefaultLayout()} />
+
                         </TabContent>
 
                         <TabContent

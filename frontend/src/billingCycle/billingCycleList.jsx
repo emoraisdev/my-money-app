@@ -21,12 +21,15 @@ export default props => {
                 <td>
                     <div className="d-flex gap-2">
 
-                        <button className="btn btn-outline-primary">
+                        <button
+                            className="btn btn-outline-primary"
+                            onClick={() => props.edit(item)}>
+
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
 
                         <button className="btn btn-outline-danger">
-                            <FontAwesomeIcon icon={faTrash}/>
+                            <FontAwesomeIcon icon={faTrash} />
                         </button>
 
                     </div>

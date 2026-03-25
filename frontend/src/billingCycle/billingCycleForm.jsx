@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faArrowAltCircleLeft, faCancel, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default ({ useMutationHook, onSuccess }) => {
+export default ({ useMutationHook, onSuccess, item, onCancel }) => {
 
     const { register, handleSubmit, reset, setError, formState: { errors } } = useForm();
     const [mutation, { isLoading }] = useMutationHook();
@@ -31,6 +31,23 @@ export default ({ useMutationHook, onSuccess }) => {
         }
     };
 
+    useEffect(() => {
+        if (item) {
+
+            reset({
+                id: item._id,
+                name: item.name,
+                month: item.month,
+                year: item.year
+            });
+        }
+    }, [item, reset]);
+
+    function handleCancel() {
+        reset()
+        onCancel()
+    }
+
     return (
         <div className="container mt-4">
 
@@ -41,6 +58,8 @@ export default ({ useMutationHook, onSuccess }) => {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
+
+                <input type="hidden" {...register("id")} />
 
                 <div className="mb-3">
                     <label className="form-label">Nome</label>
@@ -86,10 +105,20 @@ export default ({ useMutationHook, onSuccess }) => {
                     )}
                 </div>
 
-                <button className="btn btn-primary">
-                    <FontAwesomeIcon icon={faSave} className="me-1" />
-                    {isLoading ? "Salvando..." : "Salvar"}
-                </button>
+                <div className="d-flex gap-2">
+                    <button className="btn btn-primary">
+                        <FontAwesomeIcon icon={faSave} className="me-1" />
+                        {isLoading ? "Salvando..." : "Salvar"}
+                    </button>
+
+                    <button type="button"
+                        className="btn btn-light"
+                        onClick={() => handleCancel()}>
+
+                        <FontAwesomeIcon icon={faCancel} className="me-1" />
+                        Cancelar
+                    </button>
+                </div>
 
             </form>
 
