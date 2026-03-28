@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
-import { faArrowAltCircleLeft, faCancel, faSave } from "@fortawesome/free-solid-svg-icons";
+import { faArrowAltCircleLeft, faArrowLeft, faArrowLeftLong, faCancel, faDeleteLeft, faSave, faTrash, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
-export default ({ useMutationHook, onSuccess, item, onCancel }) => {
+export default ({ useMutationHook, onSuccess, item, onCancel,
+    deleteMode = false
+}) => {
 
     const { register, handleSubmit, reset, setError, formState: { errors } } = useForm();
     const [mutation, { isLoading }] = useMutationHook();
@@ -14,6 +16,7 @@ export default ({ useMutationHook, onSuccess, item, onCancel }) => {
         setFormError(null);
         try {
 
+            console.log(data)
             await mutation(data).unwrap();
             reset();
             if (onSuccess) onSuccess();
@@ -64,6 +67,7 @@ export default ({ useMutationHook, onSuccess, item, onCancel }) => {
                 <div className="mb-3">
                     <label className="form-label">Nome</label>
                     <input
+                        readOnly={deleteMode}
                         className="form-control"
                         {...register("name")}
                     />
@@ -78,6 +82,7 @@ export default ({ useMutationHook, onSuccess, item, onCancel }) => {
                 <div className="mb-3">
                     <label className="form-label">Mês</label>
                     <input
+                        readOnly={deleteMode}
                         className="form-control"
                         type="number"
                         {...register("month")}
@@ -93,6 +98,7 @@ export default ({ useMutationHook, onSuccess, item, onCancel }) => {
                 <div className="mb-3">
                     <label className="form-label">Ano</label>
                     <input
+                        readOnly={deleteMode}
                         className="form-control"
                         type="number"
                         {...register("year")}
@@ -106,17 +112,27 @@ export default ({ useMutationHook, onSuccess, item, onCancel }) => {
                 </div>
 
                 <div className="d-flex gap-2">
-                    <button className="btn btn-primary">
-                        <FontAwesomeIcon icon={faSave} className="me-1" />
-                        {isLoading ? "Salvando..." : "Salvar"}
-                    </button>
+
+                    {deleteMode ? (
+                        <button className="btn btn-danger" >
+                            <FontAwesomeIcon icon={faTrash} className="me-1" />
+
+                            {isLoading ? "Excluindo..." : "Excluir"}
+                        </button>
+                    ) : (
+                        <button className="btn btn-primary" >
+                            <FontAwesomeIcon icon={faSave} className="me-1" />
+
+                            {isLoading ? "Salvando..." : "Salvar"}
+                        </button>
+                    )}
 
                     <button type="button"
                         className="btn btn-light"
                         onClick={() => handleCancel()}>
 
-                        <FontAwesomeIcon icon={faCancel} className="me-1" />
-                        Cancelar
+                        <FontAwesomeIcon icon={faArrowLeft} className="me-1" />
+                        Voltar
                     </button>
                 </div>
 

@@ -9,7 +9,10 @@ import { useState } from "react";
 import TabContent from "../common/tab/tabContent";
 import BillingCycleList from "./billingCycleList";
 import BillingCycleForm from "./billingCycleForm";
-import { useCreateBillingCycleMutation, useUpdateBillingCycleMutation } from "./billingCycleApi";
+import {
+    useCreateBillingCycleMutation, useUpdateBillingCycleMutation,
+    useDeleteBillingCycleMutation
+} from "./billingCycleApi";
 
 export default () => {
 
@@ -27,10 +30,17 @@ export default () => {
         setVisibleTabs(["tabUpdate"])
     }
 
+    function remove(item) {
+
+        setActiveItem(item)
+        setActiveTab("tabDelete")
+        setVisibleTabs(["tabDelete"])
+    }
+
     function setAfterOperation(message) {
         setSuccessMessage(message);
         setDefaultLayout()
-        setTimeout(() => setSuccessMessage(null), 3000);
+        setTimeout(() => setSuccessMessage(null), 4000);
     }
 
     function setDefaultLayout() {
@@ -92,7 +102,7 @@ export default () => {
                                 </div>
                             )}
 
-                            <BillingCycleList edit={edit} />
+                            <BillingCycleList edit={edit} remove={remove} />
 
                         </TabContent>
 
@@ -129,7 +139,16 @@ export default () => {
                             id="tabDelete"
                             active={isActive("tabDelete")}
                             visibleTabs={visibleTabs} >
-                            Confirmação de exclusão...
+
+                            <BillingCycleForm
+                                useMutationHook={useDeleteBillingCycleMutation}
+                                item={activeItem}
+                                onSuccess={() => {
+                                    setAfterOperation("Ciclo de pagamento removido com sucesso!")
+                                }}
+                                onCancel={() => setDefaultLayout()}
+                                deleteMode={true} />
+
                         </TabContent>
 
                     </Tabs>

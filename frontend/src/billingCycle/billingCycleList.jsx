@@ -23,12 +23,14 @@ export default props => {
 
                         <button
                             className="btn btn-outline-primary"
-                            onClick={() => props.edit(item)}>
+                            onClick={() => props.edit(item)} >
 
                             <FontAwesomeIcon icon={faEdit} />
                         </button>
 
-                        <button className="btn btn-outline-danger">
+                        <button className="btn btn-outline-danger"
+                            onClick={() => props.remove(item)} >
+                            
                             <FontAwesomeIcon icon={faTrash} />
                         </button>
 
