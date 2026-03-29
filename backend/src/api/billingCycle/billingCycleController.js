@@ -70,7 +70,7 @@ export async function update(req, res) {
   const item = await BillingCycle.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   )
 
   res.json(item)

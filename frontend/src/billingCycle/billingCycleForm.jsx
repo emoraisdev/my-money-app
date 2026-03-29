@@ -1,13 +1,19 @@
-import { useForm } from "react-hook-form";
-import { faArrowAltCircleLeft, faArrowLeft, faArrowLeftLong, faCancel, faDeleteLeft, faSave, faTrash, faX } from "@fortawesome/free-solid-svg-icons";
+import { useFieldArray, useForm } from "react-hook-form";
+import { faArrowLeft, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import OperationList from "./operationList";
 
 export default ({ useMutationHook, onSuccess, item, onCancel,
     deleteMode = false
 }) => {
 
-    const { register, handleSubmit, reset, setError, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, setError,
+        control, formState: { errors } } = useForm();
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "credits"
+    });
     const [mutation, { isLoading }] = useMutationHook();
     const [formError, setFormError] = useState(null);
 
@@ -16,7 +22,6 @@ export default ({ useMutationHook, onSuccess, item, onCancel,
         setFormError(null);
         try {
 
-            console.log(data)
             await mutation(data).unwrap();
             reset();
             if (onSuccess) onSuccess();
@@ -41,7 +46,8 @@ export default ({ useMutationHook, onSuccess, item, onCancel,
                 id: item._id,
                 name: item.name,
                 month: item.month,
-                year: item.year
+                year: item.year,
+                credits: item.credits || []
             });
         }
     }, [item, reset]);
@@ -63,52 +69,64 @@ export default ({ useMutationHook, onSuccess, item, onCancel,
             <form onSubmit={handleSubmit(onSubmit)}>
 
                 <input type="hidden" {...register("id")} />
+                <div className="row">
+                    <div className="col-md-4 mb-3">
+                        <label className="form-label">Nome</label>
+                        <input
+                            readOnly={deleteMode}
+                            className="form-control"
+                            {...register("name")}
+                        />
 
-                <div className="mb-3">
-                    <label className="form-label">Nome</label>
-                    <input
-                        readOnly={deleteMode}
-                        className="form-control"
-                        {...register("name")}
-                    />
+                        {errors.name && (
+                            <div className="text-danger">
+                                {errors.name.message}
+                            </div>
+                        )}
+                    </div>
 
-                    {errors.name && (
-                        <div className="text-danger">
-                            {errors.name.message}
-                        </div>
-                    )}
+                    <div className="col-md-4 mb-3">
+                        <label className="form-label">Mês</label>
+                        <input
+                            readOnly={deleteMode}
+                            className="form-control"
+                            type="number"
+                            {...register("month")}
+                        />
+
+                        {errors.month && (
+                            <div className="text-danger">
+                                {errors.month.message}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                        <label className="form-label">Ano</label>
+                        <input
+                            readOnly={deleteMode}
+                            className="form-control"
+                            type="number"
+                            {...register("year")}
+                        />
+
+                        {errors.year && (
+                            <div className="text-danger">
+                                {errors.year.message}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Mês</label>
-                    <input
-                        readOnly={deleteMode}
-                        className="form-control"
-                        type="number"
-                        {...register("month")}
+                <div className="row mb-3">
+                    <OperationList
+                        title="Créditos"
+                        fields={fields}
+                        register={register}
+                        append={append}
+                        remove={remove}
+                        deleteMode={deleteMode}
                     />
-
-                    {errors.month && (
-                        <div className="text-danger">
-                            {errors.month.message}
-                        </div>
-                    )}
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Ano</label>
-                    <input
-                        readOnly={deleteMode}
-                        className="form-control"
-                        type="number"
-                        {...register("year")}
-                    />
-
-                    {errors.year && (
-                        <div className="text-danger">
-                            {errors.year.message}
-                        </div>
-                    )}
                 </div>
 
                 <div className="d-flex gap-2">
