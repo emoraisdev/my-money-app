@@ -3,19 +3,46 @@ import { faArrowLeft, faSave, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import OperationList from "./operationList";
+import Summary from "./summary";
 
 export default ({ useMutationHook, onSuccess, item, onCancel,
     deleteMode = false
 }) => {
 
     const { register, handleSubmit, reset, setError,
-        control, formState: { errors } } = useForm();
-    const { fields, append, remove } = useFieldArray({
+        control, watch, formState: { errors } } = useForm();
+
+    const {
+        fields: creditFields,
+        append: appendCredit,
+        remove: removeCredit
+    } = useFieldArray({
         control,
         name: "credits"
     });
+
+    const {
+        fields: debtFields,
+        append: appendDebt,
+        remove: removeDebt
+    } = useFieldArray({
+        control,
+        name: "debts"
+    });
+
     const [mutation, { isLoading }] = useMutationHook();
     const [formError, setFormError] = useState(null);
+
+    const credits = watch("credits") || []
+    const debts = watch("debts") || []
+
+    const sumCredits = credits.reduce((total, item) => {
+        return total + (item?.value || 0)
+    }, 0)
+
+    const sumDebts = debts.reduce((total, item) => {
+        return total + (item?.value || 0)
+    }, 0)
 
     const onSubmit = async (data) => {
 
@@ -47,7 +74,8 @@ export default ({ useMutationHook, onSuccess, item, onCancel,
                 name: item.name,
                 month: item.month,
                 year: item.year,
-                credits: item.credits || []
+                credits: item.credits || [],
+                debts: item.debts || []
             });
         }
     }, [item, reset]);
@@ -118,13 +146,29 @@ export default ({ useMutationHook, onSuccess, item, onCancel,
                     </div>
                 </div>
 
+                <Summary credits={sumCredits} debts={sumDebts}/>
+
                 <div className="row mb-3">
                     <OperationList
                         title="Créditos"
-                        fields={fields}
+                        fieldName="credits"
+                        fields={creditFields}
                         register={register}
-                        append={append}
-                        remove={remove}
+                        append={appendCredit}
+                        watch={watch}
+                        remove={removeCredit}
+                        deleteMode={deleteMode}
+                    />
+
+                    <OperationList
+                        title="Débitos"
+                        fieldName="debts"
+                        fields={debtFields}
+                        register={register}
+                        append={appendDebt}
+                        watch={watch}
+                        remove={removeDebt}
+                        showStatus={true}
                         deleteMode={deleteMode}
                     />
                 </div>

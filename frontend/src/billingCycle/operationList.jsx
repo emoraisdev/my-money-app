@@ -1,7 +1,9 @@
-import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faClone, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import If from "../common/operator/if"
 
-export default ({ title, fields, register, append, remove, deleteMode }) => {
+export default ({ title, fields, register, append,
+    watch, remove, deleteMode, fieldName, showStatus = false }) => {
 
     function renderRows() {
 
@@ -11,7 +13,7 @@ export default ({ title, fields, register, append, remove, deleteMode }) => {
                     <input
                         readOnly={deleteMode}
                         className="form-control"
-                        {...register(`credits.${index}.name`)}
+                        {...register(`${fieldName}.${index}.name`)}
                     />
                 </td>
                 <td>
@@ -19,18 +21,42 @@ export default ({ title, fields, register, append, remove, deleteMode }) => {
                         readOnly={deleteMode}
                         type="number"
                         className="form-control"
-                        {...register(`credits.${index}.value`)}
+                        {...register(`${fieldName}.${index}.value`,
+                            { valueAsNumber: true })}
                     />
                 </td>
+                <If test={showStatus}>
+                    <td>
+                        <input
+                            readOnly={deleteMode}
+                            className="form-control"
+                            {...register(`${fieldName}.${index}.status`)}
+                        />
+                    </td>
+                </If>
 
                 <td>
                     {!deleteMode && (
                         <div className="d-flex gap-2">
                             <button className="btn btn-outline-danger"
                                 type="button"
+                                title="Excluir"
                                 onClick={() => remove(index)} >
 
                                 <FontAwesomeIcon icon={faTrash} />
+                            </button>
+
+                            <button className="btn btn-outline-secondary"
+                                type="button"
+                                title="Clonar"
+                                onClick={() =>
+                                    append({
+                                        name: watch(`${fieldName}.${index}.name`) || "",
+                                        value: watch(`${fieldName}.${index}.value`) || 0,
+                                        status: watch(`${fieldName}.${index}.status`) || ""
+                                    })} >
+
+                                <FontAwesomeIcon icon={faClone} />
                             </button>
                         </div>
                     )}
@@ -40,7 +66,7 @@ export default ({ title, fields, register, append, remove, deleteMode }) => {
     }
 
     return (
-        <div className="col-md-6">
+        <div className="col-12 col-md-6">
             <fieldset className="border rounded p-3">
 
                 <div className="row">
@@ -54,6 +80,7 @@ export default ({ title, fields, register, append, remove, deleteMode }) => {
                         <div className="col-md-2">
                             <button
                                 type="button"
+                                title="Adicionar Item"
                                 className="btn btn-outline-success mb-3"
                                 onClick={() => append({ name: "", value: 0 })}
                             >
@@ -69,6 +96,9 @@ export default ({ title, fields, register, append, remove, deleteMode }) => {
                             <tr>
                                 <th>Nome</th>
                                 <th>Valor</th>
+                                <If test={showStatus}>
+                                    <th>Status</th>
+                                </If>
                                 <th>Ações</th>
                             </tr>
                         </thead>
