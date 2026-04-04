@@ -21,13 +21,13 @@ export async function register(req, res) {
         const emailNormalized = email.toLowerCase();
 
         if (await User.findOne({ email: emailNormalized })) {
-            return res.status(400).json({ error: "Usuário já existe" });
+            return res.status(400).json({ error: "Usuário já cadastrado" });
         }
 
         const hash = await argon2.hash(password);
         const user = await User.create({ name, email: emailNormalized, password: hash });
 
-        return res.status(201).json({ message: "Usuário criado", userId: user._id });
+        return login(req, res)
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Erro no servidor" });
@@ -56,10 +56,10 @@ export async function login(req, res) {
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+            { expiresIn: process.env.JWT_EXPIRES_IN || "10m" }
         );
 
-        return res.json({ token });
+        return res.json({ name: user.name, token });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Erro no servidor" });

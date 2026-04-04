@@ -1,30 +1,31 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithAuth } from "../auth/baseQuery";
+
+const billingCyclePath = "billingCycles"
 
 export const billingCycleApi = createApi({
     reducerPath: "billingCycleApi",
 
-    baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3003/api/billingCycles"
-    }),
+    baseQuery: baseQueryWithAuth,
 
     tagTypes: ["BillingCycle", "Summary"],
 
     endpoints: (builder) => ({
 
         getSummary: builder.query({
-            query: () => "/summary",
+            query: () => `${billingCyclePath}/summary`,
             providesTags: ["Summary"]
         }),
 
         getBillingCycles: builder.query({
             query: ({ page = 1, limit = 10 } = {}) =>
-                `?page=${page}&limit=${limit}`,
+                `${billingCyclePath}?page=${page}&limit=${limit}`,
             providesTags: ["BillingCycle"]
         }),
 
         createBillingCycle: builder.mutation({
             query: (data) => ({
-                url: "",
+                url: billingCyclePath,
                 method: "POST",
                 body: data
             }),
@@ -33,7 +34,7 @@ export const billingCycleApi = createApi({
 
         updateBillingCycle: builder.mutation({
             query: ({ id, ...data }) => ({
-                url: `/${id}`,
+                url: `${billingCyclePath}/${id}`,
                 method: "PUT",
                 body: data
             }),
@@ -42,7 +43,7 @@ export const billingCycleApi = createApi({
 
         deleteBillingCycle: builder.mutation({
             query: (data) => ({
-                url: `/${data.id}`,
+                url: `${billingCyclePath}/${data.id}`,
                 method: "DELETE"
             }),
             invalidatesTags: ["BillingCycle", "Summary"]
