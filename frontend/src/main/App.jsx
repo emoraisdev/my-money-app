@@ -5,6 +5,7 @@ import Dashboard from '../dashboard/dashboard'
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import LoginForm from '../auth/loginForm'
 import ProtectedRoute from '../auth/protectedRoute'
+import RegisterForm from '../auth/registerForm'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         </Route>
 
         <Route path="login" element={<LoginForm />} />
+        <Route path="register" element={<RegisterForm />} />
 
       </Routes>
     </BrowserRouter>

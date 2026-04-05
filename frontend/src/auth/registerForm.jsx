@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useLoginMutation } from "./authApi";
+import { useRegisterMutation } from "./authApi";
 import { setCredentials } from "./authSlice";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
@@ -9,7 +9,7 @@ export default () => {
 
     const { register, handleSubmit, reset } = useForm();
     const [formError, setFormError] = useState(null);
-    const [login, { isLoading }] = useLoginMutation();
+    const [registerUser, { isLoading }] = useRegisterMutation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -18,7 +18,7 @@ export default () => {
         setFormError(null);
         try {
 
-            const result = await login(data).unwrap();
+            const result = await registerUser(data).unwrap();
 
             dispatch(setCredentials({
                 user: { name: result.name },
@@ -33,8 +33,8 @@ export default () => {
         }
     }
 
-    function redirectToRegister() {
-        navigate('/register')
+    function redirectToLogin() {
+        navigate('/login')
     }
 
     return (
@@ -47,9 +47,10 @@ export default () => {
                 style={{ width: "100%", maxWidth: "400px", borderRadius: "12px" }}
             >
 
-                <h2 className="text-center mb-4 fw-bold">
+                <h2 className="text-center mb-2 fw-bold">
                     My Money App
                 </h2>
+                <h3 className="text-center mb-4 text-muted">Crie uma conta</h3>
 
                 {formError && (
                     <div className="alert alert-danger mt-2">
@@ -60,8 +61,18 @@ export default () => {
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
                     <div className="mb-3">
+                        <label className="form-label">Nome</label>
+                        <input
+                            autoFocus
+                            className="form-control"
+                            {...register("name")}
+                        />
+                    </div>
+
+                    <div className="mb-3">
                         <label className="form-label">E-mail</label>
                         <input
+                            type="email"
                             className="form-control"
                             {...register("email")}
                         />
@@ -76,20 +87,31 @@ export default () => {
                         />
                     </div>
 
+                    <div className="mb-3">
+                        <label className="form-label">Confirmar Senha</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            {...register("confirmPassword")}
+                        />
+                    </div>
+
                     <div className="mb-3 d-flex gap-3">
-                        
                         <button
-                            type="submit" className="btn btn-primary w-100"
+                            type="submit"
+                            className="btn btn-primary w-100"
                             disabled={isLoading}>
 
-                            {isLoading ? "Entrando..." : "Login"}
+                            {isLoading ? "Criando conta..." : "Cadastrar"}
                         </button>
-                        
+
                         <button
-                            type="button" className="btn btn-light w-100"
-                            disabled={isLoading}
-                            onClick={redirectToRegister}>
-                            Cadastre-se
+                            type="button"
+                            className="btn btn-light w-100"
+                            onClick={redirectToLogin}
+                            disabled={isLoading}>
+
+                            Voltar
                         </button>
                     </div>
                 </form>
